@@ -9,8 +9,13 @@ def charger_banque_apprentissage():
     url_image_apprentissage = "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz"
     url_etiquettes_apprentissage = "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz"
 
-    fichier_images = "images_apprentissage.gz"
-    fichier_etiquettes = "etiquettes_apprentissage.gz"
+    dossier_destination = "BANQUE_IMAGES"
+    os.makedirs(dossier_destination, exist_ok=True)
+
+    # Construction des chemins complets vers le dossier cible
+    fichier_etiquettes = os.path.join(dossier_destination, "etiquettes_apprentissage.gz")
+    fichier_images = os.path.join(dossier_destination, "images_apprentissage.gz")
+    
     #telechargement des étiquettes cad une matrice ligne avec xi = 0 si pas le chiffre de l image 1 sinon
     #dans le dossier etiquettes_apprentissage.gz
     if not os.path.exists(fichier_etiquettes):
@@ -33,8 +38,9 @@ def afficher_image_banque(index):
     Affiche l'image située à la position 'index' dans la banque d apprentissage,
     ainsi que son vrai chiffre associé (y). Fait par gemini
     """
-    fichier_images = "images_apprentissage.gz"
-    fichier_etiquettes = "etiquettes_apprentissage.gz"
+    dossier_destination = "BANQUE_IMAGES"
+    fichier_etiquettes = os.path.join(dossier_destination, "etiquettes_apprentissage.gz")
+    fichier_images = os.path.join(dossier_destination, "images_apprentissage.gz")
 
     with gzip.open(fichier_etiquettes, 'rb') as f:
         y_apprentissage = np.frombuffer(f.read(), np.uint8, offset=8)
@@ -57,5 +63,5 @@ def afficher_image_banque(index):
 # Exemple : Afficher la 1re image (index 0) et la 42e image (index 41)
 charger_banque_apprentissage()
 afficher_image_banque(0)
-afficher_image_banque(41)
+afficher_image_banque(1)
 
