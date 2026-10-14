@@ -65,3 +65,21 @@ charger_banque_apprentissage()
 afficher_image_banque(0)
 afficher_image_banque(1)
 
+
+def recuperer_valeurs_pixels(index):
+    """
+    Récupère les valeurs des pixels de l'image située à la position 'index' dans la banque d'apprentissage.
+    Retourne un vecteur de 784 valeurs (normalisées entre 0 et 1).
+    """
+    dossier_destination = "BANQUE_IMAGES"
+    fichier_images = os.path.join(dossier_destination, "images_apprentissage.gz")
+
+    with gzip.open(fichier_images, 'rb') as f:
+        X_apprentissage = np.frombuffer(f.read(), np.uint8, offset=16).reshape(-1, 784)
+        X_apprentissage = X_apprentissage / 255.0  # Normalisation entre 0.0 et 1.0
+
+    return X_apprentissage[index]
+
+print("Récupération des valeurs des pixels de l'image 1 :")
+pixels_image_1 = recuperer_valeurs_pixels(0)
+print(pixels_image_1)  # Affiche le vecteur de 784 valeurs des pixels de l'image 1
