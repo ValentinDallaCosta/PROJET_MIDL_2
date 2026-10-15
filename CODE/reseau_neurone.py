@@ -16,7 +16,6 @@ taille_couches = [input_size, 16, 16,10] # Taille de chaque couche (entrée, cou
 alpha = 0.1 # Taux d'apprentissage pour la mise à jour des poids et biais
 
 
-
 ######## Liste des paramètres à optimiser ########
 # Initialisé aléatoirement :
 # Poids des connections :
@@ -29,7 +28,7 @@ B_1 = np.zeros((1, taille_couches[1]))
 B_2 = np.zeros((1, taille_couches[2]))
 B_3 = np.zeros((1, taille_couches[3]))
 
-for I in range(10000):  # Boucle d'entraînement
+for I in range(1000):  # Boucle d'entraînement
     index = I % 10000  # Assurez-vous que l'index reste dans les limites de la banque d'images
     print(f"--- Itération {I+1} ---")
 
@@ -85,10 +84,6 @@ for I in range(10000):  # Boucle d'entraînement
     B_1 -= alpha * dB_1
     #print(f"sortie du réseau : {Couche_4}")
 
-afficher_image_banque(9999)  # Affiche l'image correspondant à l'index actuel
+afficher_image_banque(999)  # Affiche l'image correspondant à l'index actuel
 print(f"Coût calculé : {erreur:.4f}")
 print(f"Sortie du réseau : {Couche_4}")
-print(f"Poids avant mise à jour : {W_1[0][0]:.4f}, {W_2[0][0]:.4f}, {W_3[0][0]:.4f}")
-print(f"Biais avant mise à jour : {B_1[0][0]:.4f}, {B_2[0][0]:.4f}, {B_3[0][0]:.4f}")
-print(f"Poids après mise à jour : {W_1[0][0]:.4f}, {W_2[0][0]:.4f}, {W_3[0][0]:.4f}")
-print(f"Biais après mise à jour : {B_1[0][0]:.4f}, {B_2[0][0]:.4f}, {B_3[0][0]:.4f}")

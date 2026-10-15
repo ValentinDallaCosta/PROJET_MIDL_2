@@ -111,3 +111,5 @@ def recuperer_etiquette(index):
     vecteur_etiquette[etiquette] = 1  # Mettre 1 à la position correspondant au chiffre
 
     return vecteur_etiquette
+
+print()
