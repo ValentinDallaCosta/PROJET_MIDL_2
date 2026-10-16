@@ -61,12 +61,13 @@ def one_hot(y):
 def initialiser_poids(taille_couches):
     """
     Initialise les poids du réseau de neurones.
+    Utilise la méthode de Xavier pour l'initialisation.
     taille_couches : liste contenant le nombre de neurones dans chaque couche
     Retourne une liste de matrices de poids pour chaque couche.
     """
     liste_W = []
     for i in range(len(taille_couches) - 1):
-        W = np.random.randn(taille_couches[i], taille_couches[i + 1]) * 0.01  # Initialisation aléatoire des poids
+        W = np.random.randn(taille_couches[i], taille_couches[i + 1]) * np.sqrt(2.0 / taille_couches[i])  # Initialisation de Xavier
         liste_W.append(W)
     return liste_W
 
@@ -118,11 +119,11 @@ def entrainer_reseau_neurone(X_data, Y_data, liste_W, liste_B, alpha, taille_cou
         delta = calculer_gradiant(liste_W, liste_B, couches, liste_Z, one_hot(etiquette))
         liste_W, liste_B = mise_a_jour_parametres(liste_W, liste_B, couches, delta, alpha)
 
-        if (iteration+ 1) % 5000 == 0:
-                print(f"Itération {iteration + 1}/{nb_iterations} terminée")
+        #if (iteration+ 1) % 5000 == 0:
+                #print(f"Itération {iteration + 1}/{nb_iterations} terminée")
 
 
-    print("\nEntraînement terminé !")
+    #print("\nEntraînement terminé !")
     return liste_W, liste_B  # Retourne les poids et biais mis à jour
 
 def calculer_gradiant(liste_poids, liste_biais, liste_couches, liste_Z, etiquette_vecteur):
