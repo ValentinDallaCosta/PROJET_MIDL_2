@@ -44,6 +44,9 @@ print(f"Erreur moyenne : {erreur_moyenne:.4f}")"""
 
 # Variation du taux d'apprentissage alpha pour observer son impact sur la convergence du réseau de neurones :
 
+# Il est préférable de l'avoir entre 0.1 et 0.5 pour un apprentissage efficace, mais pas trop rapide pour éviter les oscillations.
+
+
 # Variation du nombre d'itérations pour observer son impact sur la convergence du réseau de neurones : 
 for k in range (13):
     nb_iterations = 20000 * (k+1)  # Augmentation du nombre d'itérations
