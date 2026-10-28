@@ -1,4 +1,5 @@
 import numpy as np
+from banque_image import *
 
 #############################
 ### Fonction d'activation ###
@@ -102,7 +103,7 @@ def entrainer_reseau_neurone(X_data, Y_data, liste_W, liste_B, alpha, taille_cou
     for iteration in range(nb_iterations):
         index = iteration % nb_images  # On s'assure que l'index reste dans les limites de la banque d'images
 
-        X_sample = X_data[index:index+1]  # (1, 784)
+        X_sample = X_data[index:index+1] # Valeur de chaque pixels de l'image (première couche)
         etiquette = Y_data[index]  # Entier du chiffre associé à l'image
 
 
@@ -220,6 +221,29 @@ def prediction_values(prediction_vector):
     return int(np.argmax(prediction_vector))
 
 
+######################
+### Fonctions main ###
+######################
+def main_reseau(taille_couches, alpha, nb_image_train):
+    charger_banque_apprentissage()
+    X_data, Y_data = charger_donnees()
+
+    X_train = X_data[:9000]
+    Y_train = Y_data[:9000]
+    X_test = X_data[9000:10000]
+    Y_test = Y_data[9000:10000]
+
+    W = initialiser_poids(taille_couches)  # Initialisation de Xavier des poids
+    B = initialiser_biais(taille_couches)  # Initialisation des biais à zéro
+    W, B = entrainer_reseau_neurone(X_train, Y_train, W, B, alpha, taille_couches, nb_image_train)
+
+    # Test global sur l'ensemble des données de test après l'entraînement
+    taux_reussite, erreur_moyenne = test_global_reseau_neurone(X_test, Y_test, W, B)
+    print(f"Taux de réussite : {taux_reussite} %")
+    print(f"Erreur moyenne : {erreur_moyenne:.4f}")
+    print("--------------------------------------------------\n")
+
+    
 
 
 

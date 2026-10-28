@@ -112,4 +112,3 @@ def recuperer_etiquette(index):
 
     return vecteur_etiquette
 
-print()
