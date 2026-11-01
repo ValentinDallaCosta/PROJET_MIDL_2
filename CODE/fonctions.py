@@ -42,6 +42,14 @@ def cout_mse(X, Y):
     cout = 1/2 * np.sum((X-Y)**2)
     return cout
 
+def cout_mse_derivative(X, Y):
+    """
+    Dérivée de la fonction de coût pour le réseau de neurones.
+    X : matrice d'entrée 
+    Y : vecteur des étiquettes (taille : nombre d'exemples)
+    """
+    return X - Y  # Dérivée du coût par rapport à la sortie du réseau
+
 ################################################
 ### Fonction de vectorisation de l'étiquette ###
 ################################################
@@ -107,31 +115,26 @@ def entrainer_reseau_neurone(X_data, Y_data, liste_W, liste_B, alpha, taille_cou
         etiquette = Y_data[index]  # Entier du chiffre associé à l'image
 
 
-        liste_Z = []  # Liste pour stocker les sommes pondérées de chaque couche
+        liste_Z = [None]  # Liste pour stocker les sommes pondérées de chaque couche
+
         couche_1 = X_sample  # Couche d'entrée
         couches = [couche_1]  # Liste pour stocker les activations de chaque couche
 
         for i in range(1, nb_couches):
             Z_i = somme_ponderee(couches[i-1], liste_W[i-1], liste_B[i-1])  # Somme pondérée pour la couche cachée
-            liste_Z.append(Z_i)  # Stocke la somme pondérée  
+            liste_Z.append(Z_i)  # Stocke la somme pondérée (indice 1 = couche 1, ...)
             couche_i = fonction_activation(Z_i)  # Application de la fonction d'activation pour calculer la couche suivante
             couches.append(couche_i)
 
-        delta = calculer_gradiant(liste_W, liste_B, couches, liste_Z, one_hot(etiquette))
+        delta = calculer_gradiant(liste_W, couches, liste_Z, one_hot(etiquette))
         liste_W, liste_B = mise_a_jour_parametres(liste_W, liste_B, couches, delta, alpha)
 
-        #if (iteration+ 1) % 5000 == 0:
-                #print(f"Itération {iteration + 1}/{nb_iterations} terminée")
-
-
-    #print("\nEntraînement terminé !")
     return liste_W, liste_B  # Retourne les poids et biais mis à jour
 
-def calculer_gradiant(liste_poids, liste_biais, liste_couches, liste_Z, etiquette_vecteur):
+def calculer_gradiant(liste_poids, liste_couches, liste_Z, etiquette_vecteur):
     """
     Calcule le gradient pour chaque couche du réseau de neurones.
     liste_poids : liste des matrices des poids pour chaque couche
-    liste_biais : liste des vecteurs des biais pour chaque couche
     liste_couches : liste des activations de chaque couche
     liste_Z : liste des sommes pondérées de chaque couche
     etiquette_vecteur : vecteur one-hot représentant l'étiquette réelle
@@ -140,10 +143,11 @@ def calculer_gradiant(liste_poids, liste_biais, liste_couches, liste_Z, etiquett
     nb_couches = len(liste_couches)
     delta = [None] * nb_couches  # Liste pour stocker les deltas pour chaque couche
 
-    delta[-1] = (liste_couches[-1] - etiquette_vecteur) * sigmoid_derivative(liste_Z[-1])  # Erreur en sortie
+    # Calcul du delta pour la couche de sortie : 
+    delta[-1] = cout_mse_derivative(liste_couches[-1], etiquette_vecteur) * sigmoid_derivative(liste_Z[-1])  # Erreur en sortie
 
     for i in range(nb_couches - 2, 0, -1):  # Boucle pour les couches cachées
-        delta[i] = np.dot(delta[i + 1], liste_poids[i].T) * sigmoid_derivative(liste_Z[i - 1])  # Erreur pour la couche cachée
+        delta[i] = np.dot(delta[i + 1], liste_poids[i].T) * sigmoid_derivative(liste_Z[i])  # Erreur pour la couche cachée
 
     return delta  # Retourne la liste des deltas pour chaque couche
 
@@ -165,6 +169,89 @@ def mise_a_jour_parametres(liste_poids, liste_biais, liste_couches, delta, alpha
         liste_biais[i - 1] -= alpha * dB  # Mise à jour des biais
     return liste_poids, liste_biais  # Retourne les poids et biais mis à jour
 
+
+#####################################################
+### Fonctions de validation du réseau de neurones ###
+#####################################################
+
+def verifier_coherence_gradients(X_sample, etiquette, liste_W, liste_B, epsilon=1e-5):
+    """
+    Vérifie la cohérence des gradients analytiques (rétropropagation)
+    en les comparant aux gradients numériques (différences finies centrées).
+    X_sample : une seule image de taille (1, 784)
+    etiquette : entier du chiffre correspondant (0 à 9)
+    """
+    nb_couches = len(liste_W) + 1
+
+    # 1. Passe avant et calcul du gradient analytique (ton code)
+    liste_Z = [None]
+    couches = [X_sample]
+    for i in range(1, nb_couches):
+        Z_i = somme_ponderee(couches[i - 1], liste_W[i - 1], liste_B[i - 1])
+        liste_Z.append(Z_i)
+        couches.append(fonction_activation(Z_i))
+
+    delta = calculer_gradiant(liste_W, couches, liste_Z, one_hot(etiquette))
+
+    print("=== VALIDATION DES GRADIENTS (DIFFÉRENCES FINIES) ===")
+    for l in range(len(liste_W)):
+        # Gradients analytiques de la couche l
+        dW_analytique = np.dot(couches[l].T, delta[l + 1])
+        dB_analytique = np.sum(delta[l + 1], axis=0, keepdims=True)
+
+        # --- A. Vérification sur un échantillon de poids de la couche l ---
+        erreurs_W = []
+        # On teste 10 poids tirés au hasard dans la matrice W[l] pour aller vite
+        for _ in range(10):
+            r = np.random.randint(0, liste_W[l].shape[0])
+            c = np.random.randint(0, liste_W[l].shape[1])
+
+            valeur_initiale = liste_W[l][r, c]
+
+            # Coût en w + epsilon
+            liste_W[l][r, c] = valeur_initiale + epsilon
+            _, cout_plus = test_reseau_neurone_unique(X_sample, etiquette, liste_W, liste_B)
+
+            # Coût en w - epsilon
+            liste_W[l][r, c] = valeur_initiale - epsilon
+            _, cout_moins = test_reseau_neurone_unique(X_sample, etiquette, liste_W, liste_B)
+
+            # On remet le poids à sa valeur exacte d'origine
+            liste_W[l][r, c] = valeur_initiale
+
+            # Gradient numérique et erreur relative
+            grad_num = (cout_plus - cout_moins) / (2 * epsilon)
+            grad_ana = dW_analytique[r, c]
+
+            denom = abs(grad_ana) + abs(grad_num)
+            if denom > 0:
+                erreurs_W.append(abs(grad_ana - grad_num) / denom)
+            else:
+                erreurs_W.append(0.0)  # Si les deux gradients sont à 0, l'erreur est nulle
+
+        # --- B. Vérification sur tous les biais de la couche l ---
+        erreurs_B = []
+        for c in range(liste_B[l].shape[1]):
+            valeur_initiale = liste_B[l][0, c]
+
+            liste_B[l][0, c] = valeur_initiale + epsilon
+            _, cout_plus = test_reseau_neurone_unique(X_sample, etiquette, liste_W, liste_B)
+
+            liste_B[l][0, c] = valeur_initiale - epsilon
+            _, cout_moins = test_reseau_neurone_unique(X_sample, etiquette, liste_W, liste_B)
+
+            liste_B[l][0, c] = valeur_initiale
+
+            grad_num = (cout_plus - cout_moins) / (2 * epsilon)
+            grad_ana = dB_analytique[0, c]
+
+            denom = abs(grad_ana) + abs(grad_num)
+            if denom > 0:
+                erreurs_B.append(abs(grad_ana - grad_num) / denom)
+            else:
+                erreurs_B.append(0.0)
+
+        print(f"Couche {l + 1} | Erreur relative max sur W : {max(erreurs_W):.2e} | sur B : {max(erreurs_B):.2e}")
 
 ###############################################
 ### Fonctions de test du réseau de neurones ###
@@ -224,7 +311,7 @@ def prediction_values(prediction_vector):
 ######################
 ### Fonctions main ###
 ######################
-def main_reseau(taille_couches, alpha, nb_image_train):
+def main_reseau(taille_couches, alpha, nb_image_train, test_gradients=False):
     charger_banque_apprentissage()
     X_data, Y_data = charger_donnees()
 
@@ -243,16 +330,8 @@ def main_reseau(taille_couches, alpha, nb_image_train):
     print(f"Erreur moyenne : {erreur_moyenne:.4f}")
     print("--------------------------------------------------\n")
 
+    if test_gradients:
+        print("Vérification de la cohérence des gradients...")
+        verifier_coherence_gradients(X_train[0:1], Y_train[0], W, B)  # Vérification sur le premier exemple d'entraînement
+
     
-
-
-
-
-
-
-
-
-
-
-
-

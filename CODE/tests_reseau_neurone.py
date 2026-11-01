@@ -1,4 +1,4 @@
-from fonctions import main_reseau
+from fonctions import main_reseau, verifier_coherence_gradients
 input_size = 784 # Nb de pixels sur l'image de départ
 output_size = 10 # Correspond au 10 chiffer de prédiction en sortie
 
@@ -22,8 +22,9 @@ main_reseau(tailles_couches, alpha, nb_image_train)
 
 # Tests 2 :
 print("--------------------- TEST 2 ---------------------")
-tailles_couches = [input_size, 16, output_size] # 3 couches de tailles 784, 16 et 10
+tailles_couches = [input_size, 16,10, output_size] # 3 couches de tailles 784, 16 et 10
 alpha = 0.3 # Taux d'apprentissage
-nb_image_train = 10000000
+nb_image_train = 9000
 print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} images d'entraînement")
-main_reseau(tailles_couches, alpha, nb_image_train)
+main_reseau(tailles_couches, alpha, nb_image_train, test_gradients=True)
+
