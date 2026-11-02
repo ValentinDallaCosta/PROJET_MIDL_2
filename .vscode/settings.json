@@ -1,0 +1,14 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.jj": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/c:\\Users\\Baptiste Elissalde\\Desktop\\Licence_math_info\\S5\\MIDL2\\PROJET_MIDL_2\\RAPPORT\\rapport.aux": true,
+        "**/c:\\Users\\Baptiste Elissalde\\Desktop\\Licence_math_info\\S5\\MIDL2\\PROJET_MIDL_2\\RAPPORT\\rapport.log": true,
+        "**/c:\\Users\\Baptiste Elissalde\\Desktop\\Licence_math_info\\S5\\MIDL2\\PROJET_MIDL_2\\RAPPORT\\rapport.gz": true,
+        "**/c:\\Users\\Baptiste Elissalde\\Desktop\\Licence_math_info\\S5\\MIDL2\\PROJET_MIDL_2\\RAPPORT\\rapport.out": true
+    }
+}
