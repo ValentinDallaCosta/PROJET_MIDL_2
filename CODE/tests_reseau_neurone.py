@@ -13,8 +13,8 @@ alpha = 0.3
 #                  - le nombre de couhes
 #                  - le nombre de neurones par couche
 
-# Les tests 1 à 3 gardent la même architecture et font varier le nombre
-# d'itérations. Les tests 3 à 5 gardent le même nombre d'itérations et
+# Les tests 1 à 4 gardent la même architecture et font varier le nombre
+# d'itérations. Les tests 4 à 6 gardent le même nombre d'itérations et
 # comparent la largeur puis la profondeur du réseau.
 
 # Test 1 :
