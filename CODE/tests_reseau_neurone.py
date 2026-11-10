@@ -1,30 +1,60 @@
-from fonctions import main_reseau, verifier_coherence_gradients
-input_size = 784 # Nb de pixels sur l'image de départ
-output_size = 10 # Correspond au 10 chiffer de prédiction en sortie
+from fonctions import main_reseau
+import numpy as np
+
+input_size = 784  # Nombre de pixels de l'image
+output_size = 10  # Nombre de classes à prédire
+alpha = 0.3
 
 ####################################################################
-### Début des tests sur les paramètres du réseaux de neuronens : ###
+### Début des tests sur les paramètres du réseau de neurones :    ###
 ####################################################################
 
-# On fera varier : - Le nombre de couche cachée 
-#                  - La taille des couches cachées
-#                  - Le taux d'apprentissage alpha
-#                  - Le nombre d'image étudiée lors de l'apprentissage
+# On fera varier : - le nombre d'itérations (nombre d'images d'apprentissage)
+#                  - le nombre de couhes
+#                  - le nombre de neurones par couche
 
+# Les tests 1 à 3 gardent la même architecture et font varier le nombre
+# d'itérations. Les tests 3 à 5 gardent le même nombre d'itérations et
+# comparent la largeur puis la profondeur du réseau.
 
-# Tests 1 :
+# Test 1 :
 print("--------------------- TEST 1 ---------------------")
-tailles_couches = [input_size, 16, output_size] # 3 couches de tailles 784, 16 et 10
-alpha = 0.3 # Taux d'apprentissage
+tailles_couches = [input_size, 16, output_size]
 nb_image_train = 100
-print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} images d'entraînement")
+print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} itérations")
 main_reseau(tailles_couches, alpha, nb_image_train)
 
-# Tests 2 :
+# Test 2 :
 print("--------------------- TEST 2 ---------------------")
-tailles_couches = [input_size, 16,10, output_size] # 3 couches de tailles 784, 16 et 10
-alpha = 0.3 # Taux d'apprentissage
-nb_image_train = 9000
-print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} images d'entraînement")
-main_reseau(tailles_couches, alpha, nb_image_train, test_gradients=True)
+tailles_couches = [input_size, 16, output_size]
+nb_image_train = 1000
+print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} itérations")
+main_reseau(tailles_couches, alpha, nb_image_train)
 
+# Test 3 :
+print("--------------------- TEST 3 ---------------------")
+tailles_couches = [input_size, 16, output_size]
+nb_image_train = 9000
+print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} itérations")
+main_reseau(tailles_couches, alpha, nb_image_train)
+
+# Test 4 :
+print("--------------------- TEST 4 ---------------------")
+tailles_couches = [input_size, 16, output_size]
+nb_image_train = 15000
+print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} itérations")
+main_reseau(tailles_couches, alpha, nb_image_train)
+
+# Test 5 :
+print("--------------------- TEST 5 ---------------------")
+tailles_couches = [input_size, 64, output_size]
+nb_image_train = 9000
+print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} itérations")
+main_reseau(tailles_couches, alpha, nb_image_train)
+
+# Test 6 :
+print("--------------------- TEST 6 ---------------------")
+tailles_couches = [input_size, 16, 16, output_size]
+nb_image_train = 9000
+print(f"Couches = {tailles_couches} ------ alpha = {alpha} ------ {nb_image_train} itérations")
+main_reseau(tailles_couches, alpha, nb_image_train)

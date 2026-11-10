@@ -160,18 +160,81 @@
 .................................................
 \subsection{Validation des gradients}
 
-.................................................
+\noindent La rétropropagation a été vérifiée par différences finies centrées avec $\varepsilon=10^{-5}$, sur une image d’apprentissage. Pour chaque couche, dix poids tirés au hasard et tous les biais ont été contrôlés. Les erreurs relatives maximales obtenues sont :
 
-.................................................
-Voici ce que ces chiffres signifient pour ton code et ton livrable :Une précision optimale :
- Les valeurs comme 2.67e-07 ou 4.16e-06 sont des erreurs relatives infimes. Avec une perturbation $\varepsilon = 10^{-5}$, un écart de l'ordre de $10^{-6}$ à $10^{-8}$ est le meilleur résultat atteignable en raison des limites de précision des nombres à virgule flottante en informatique. Les deux méthodes trouvent donc exactement la même pente.
- Des formules validées : Cela confirme de manière irréfutable que les matrices dW et dB calculées par ta dérivation en chaîne (gradient analytique) sont correctes. Il n'y a aucune erreur d'indice, de transposée ou de signe dans ta fonction de rétropropagation.
- Un argument clé pour le rapport : Cette sortie de console valide explicitement l'exigence de la section 1.2 du sujet de projet, qui demande de "mettre en place au moins une méthode permettant de vérifier la cohérence de vos calculs". Tu peux intégrer ces résultats directement dans ton rapport (par exemple sous forme de petit tableau) pour prouver au correcteur que ton moteur d'apprentissage est fiable avant même de présenter tes taux de réussite.
-.................................................
+\begin{center}
+\begin{tabular}{c|cc}
+\hline
+\textbf{Couche} & \textbf{Poids ($W$)} & \textbf{Biais ($B$)} \\
+\hline
+1 & $0$ & $3{,}20 \times 10^{-7}$ \\
+2 & $8{,}09 \times 10^{-6}$ & $8{,}92 \times 10^{-9}$ \\
+3 & $1{,}77 \times 10^{-3}$ & $1{,}89 \times 10^{-5}$ \\
+\hline
+\end{tabular}
+\end{center}
 
-.................................................
+\noindent Les écarts sont faibles dans l’ensemble, mais la vérification n’est pas parfaite : l’écart relatif maximal observé concerne certains poids de la couche de sortie. Ce contrôle porte sur un échantillon de poids et une seule image ; il constitue donc une vérification numérique ciblée, et non une preuve générale de l’absence d’erreur.
 
+\subsection{Le protocole expérimental}
 
+\subsubsection{Données nécessaires et hypothèse :}
+
+Tout d'abord nous avons récupéré chacune des images de la banque MNIST, puis associé à chaque pixel une valeur normalisé entre 0 et 1. A cela nous pouvons lier une étiquette correspondant à la valeur présente sur l'image.
+
+Ensuite, à l'aide du programme principal détaillé plus haut nous pouvons alors générer le réseau de neurones, d'abord non entraîné, puis l'entraîner en fonction des paramètres voulus. Le détail des choix et de l'impact de ceux-ci seront détaillés dans la partie Tests.
+Cet entraînement supervisé nous permettra d'émettre des hypothèses sur les paramètres et d'en étudier leurs importance.
+
+\subsubsection{Modèle et suivis de l’expérience :}
+
+Notre réseau est entièrement connecté et plusieurs fonctions nous permettent de suivre et d'étudier l'apprentissage du réseau tout le long de son exécution. 
+
+A la sortie du programme nous pouvons déjà récupérer les prédictions de chacune des 10 valeurs, cela nous permets de voir sur quel chiffre le réseau se trompe mais surtout quel chiffre pose des problèmes et amènes à une mauvaise prédiction (exemple: entre le 4 et le 9).
+De plus, le calcul de la MSE est effectué autant que nécessaire afin de suivre l'évolution de notre réseau.
+
+\subsubsection{Déroulement de l'expérimentation :}
+
+Le déroulé de l'expérimentation est assez simple et se base plus l'étendue des choix de paramètre possible.
+
+Il consiste en un enchaînement d’entraînement de réseau de neurones, toujours indépendant les uns des autres, et à l'observation des capacités du réseau une fois l'entraînement terminé.
+A cela se rajoute une partie de séparation très importante entre les images de tests et d'entraînement, dans notre cas celle-ci restera figée et identique tout le long de l'expérimentation, définie à 90\% des images pour l’entraînement et 10\% pour le test.
+
+\subsection{Tests, résultats et analyse}
+
+Pour étudier l’effet des paramètres variables sur l’apprentissage et de l’architecture sans multiplier excessivement les configurations, nous avons réalisé cinq essais d'architecture, mais chacun d'eux a été effectué plusieurs fois pour lisser leurs résultats. Le taux d’apprentissage ($\alpha=0{,}3$) sera conservé tout sur tout les tests.
+
+Les quatre premiers essais gardent l’architecture $784$--$16$--$10$ et font varier le nombre d’itérations, les deux derniers utilisent 9 000 itérations et comparent le nombre de neurones cachés puis le nombre de couches (profondeur et largeur). Pour chaque expérience, les performances sont mesurées sur les 1 000 images réservées au test, à l’aide du taux de réussite et du coût moyen calculé par le code.
+
+\begin{center}
+\begin{tabular}{l|r|r|r}
+\hline
+\textbf{Architecture} & \textbf{Itérations} & \textbf{Réussite (\%)} & \textbf{Coût moyen} \\
+\hline
+$784$--$16$--$10$ & 100 & 29{,}8 & 0{,}4254 \\
+$784$--$16$--$10$ & 1\,000 & 67{,}4 & 0{,}2599 \\
+$784$--$16$--$10$ & 9\,000 & 89{,}8 & 0{,}0855 \\
+$784$--$16$--$10$ & 15\,000 & 87{,}0 & 0{,}0994 \\
+$784$--$32$--$10$ & 9\,000 & 91{,}3 & 0{,}0765 \\
+$784$--$16$--$16$--$10$ & 9\,000 & 87{,}6 & 0{,}0981 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Nombres d'itérations :}
+
+Avec l’architecture $784$--$16$--$10$, le taux de réussite progresse de 29{,}8\,\% après 100 itérations à 67{,}4\,\% après 1\,000, puis à 89{,}8\,\% après 9\,000, et pour finir à 87\% au bout de 15\,000 itérations. Ce qui montre une stagnation de la réussite du réseau au delà d'un certain nombre d'itération. Parallèlement, le coût moyen diminue de 0{,}4254 à 0{,}2599 puis à 0{,}0855 pour 9\,000 itération. Cette progression est cohérente avec un apprentissage plus abouti. Toutefois, les itérations parcourent séquentiellement les images : les 100 premières mises à jour utilisent les 100 premières images, alors que 9\,000 itérations parcourent les 9\,000 images. L’effet du nombre d’itérations ne peut donc pas être isolé de celui du nombre d’exemples présentés.
+
+En effet cela n'est pas présenté dans cette partie de test car le réseau serai trop long à entraîner (du à la grande ressemblance des données, d'entraînement et de tests), mais il est possible que lorsque le nombre d'exemplaire présenté est trop faible et que le nombre d'itération est très élevé, qu'ai lieux un sur-ajustement du réseau et que ses résultats baisses (celui-ci ne reconnaît plus que les images d'entraînement et non celle de tests).
+
+\subsubsection{Profondeur et largeur :}
+
+À 9\,000 itérations, élargir la couche cachée de 16 à 32 neurones fait passer le taux de réussite de 89{,}8\,\% à 91{,}3\,\% et réduit le coût moyen de 0{,}0855 à 0{,}0765. En revanche, l’architecture avec deux couches cachées de 16 neurones obtient 87{,}6\,\% de réussite et un coût de 0{,}0981. Sur ces essais, l’augmentation de la profondeur d'une couche donne donc le meilleur résultat, tandis que l’ajout d’une couche ne l’améliore pas.
+
+\subsubsection{Conclusion :}
+
+Nous avons remarqué avec ces quelques tests que sur notre simple réseau de neurones certains paramètres étaient plus efficace que d'autres. Cela ne reste néanmoins qu'une conclusion un peu hâtive car la grosse partie de recherche sur les différents paramètres et fonctions mise en œuvre dans notre programme sera étudié plus en détail dans la partie 2 du projet. 
+
+Mais nous pouvons dire pour l'instant que l'architecture la plus efficace est composé d'une couche cachée d'une profondeur égale à 32 avec un entraînement sur 9\,000 itérations.
 
 \newpage
 \section{\huge{Annexe}}
