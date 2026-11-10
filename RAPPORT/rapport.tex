@@ -160,21 +160,13 @@
 .................................................
 \subsection{Validation des gradients}
 
-\noindent La rétropropagation a été vérifiée par différences finies centrées avec $\varepsilon=10^{-5}$, sur une image d’apprentissage. Pour chaque couche, dix poids tirés au hasard et tous les biais ont été contrôlés. Les erreurs relatives maximales obtenues sont :
+.................................................
 
-\begin{center}
-\begin{tabular}{c|cc}
-\hline
-\textbf{Couche} & \textbf{Poids ($W$)} & \textbf{Biais ($B$)} \\
-\hline
-1 & $0$ & $3{,}20 \times 10^{-7}$ \\
-2 & $8{,}09 \times 10^{-6}$ & $8{,}92 \times 10^{-9}$ \\
-3 & $1{,}77 \times 10^{-3}$ & $1{,}89 \times 10^{-5}$ \\
-\hline
-\end{tabular}
-\end{center}
+.................................................
 
-\noindent Les écarts sont faibles dans l’ensemble, mais la vérification n’est pas parfaite : l’écart relatif maximal observé concerne certains poids de la couche de sortie. Ce contrôle porte sur un échantillon de poids et une seule image ; il constitue donc une vérification numérique ciblée, et non une preuve générale de l’absence d’erreur.
+.................................................
+
+.................................................
 
 \subsection{Le protocole expérimental}
 
